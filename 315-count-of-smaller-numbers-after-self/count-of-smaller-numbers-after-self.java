@@ -1,0 +1,64 @@
+
+import java.util.*;
+
+class Solution {
+    public List<Integer> countSmaller(int[] nums) {
+        int n = nums.length;
+        int[] indexes = new int[n];
+        int[] temp = new int[n];
+        int[] count = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            indexes[i] = i;
+        }
+
+        mergeSort(nums, indexes, temp, count, 0, n - 1);
+
+        List<Integer> result = new ArrayList<>();
+        for (int c : count) {
+            result.add(c);
+        }
+
+        return result;
+    }
+
+    private void mergeSort(int[] nums, int[] indexes, int[] temp,
+                           int[] count, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+
+        int mid = left + (right - left) / 2;
+
+        mergeSort(nums, indexes, temp, count, left, mid);
+        mergeSort(nums, indexes, temp, count, mid + 1, right);
+
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        int smaller = 0;
+
+        while (i <= mid && j <= right) {
+            if (nums[indexes[j]] < nums[indexes[i]]) {
+                temp[k++] = indexes[j++];
+                smaller++;
+            } else {
+                count[indexes[i]] += smaller;
+                temp[k++] = indexes[i++];
+            }
+        }
+
+        while (i <= mid) {
+            count[indexes[i]] += smaller;
+            temp[k++] = indexes[i++];
+        }
+
+        while (j <= right) {
+            temp[k++] = indexes[j++];
+        }
+
+        for (int p = left; p <= right; p++) {
+            indexes[p] = temp[p];
+        }
+    }
+}
